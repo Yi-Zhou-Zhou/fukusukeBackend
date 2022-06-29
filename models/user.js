@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
     email: {type: String, required: true, unique: true},
@@ -29,7 +30,7 @@ UserSchema.statics.login = async function (email,password){
     const user = await this.findOne({email})
     return new Promise ((resolve, reject) => {
         if (user) {
-            if (password === user.password){
+            if (bcrypt.compareSync(password, user.password)) {
                 resolve(user)
             }
             reject('Incorrect password')
