@@ -22,7 +22,7 @@ router.post('/register', async (req, res) => {
         const emailValid = await validateEmail(email);
         if(!emailValid) {
             return res.status(400).json({
-                message: 'Invalid email'
+                message: 'El correo electrónico no es válido'
             })
         }
         // hash the password

@@ -43,7 +43,7 @@ UserSchema.statics.createUser = async function ({email, password, name, run, add
     const user = await this.findOne({email})
     return new Promise ((resolve, reject) => {
         if (user) {
-            reject('User already exists')
+            reject('El correo electrónico ya está en uso')
             return;
         }
         const newUser = new this({
