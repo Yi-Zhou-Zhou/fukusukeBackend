@@ -33,9 +33,9 @@ UserSchema.statics.login = async function (email,password){
             if (bcrypt.compareSync(password, user.password)) {
                 resolve(user)
             }
-            reject('Incorrect password')
+            reject('La contraseña es incorrecta')
         }
-        reject('Incorrect email')
+        reject('El correo electrónico es incorrecto')
     })
 }
 
