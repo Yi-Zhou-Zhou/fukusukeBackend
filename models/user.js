@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
 
 const UserSchema = new mongoose.Schema({
     email: {type: String, required: true, unique: true},
@@ -25,13 +26,25 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
+UserSchema.statics.validateJWT = async function (token){
+    const decoded = jwt.verify(token, "CHANGE_THIS_TOKEN_SECRET");
+}
+
 
 UserSchema.statics.login = async function (email,password){
     const user = await this.findOne({email})
     return new Promise ((resolve, reject) => {
         if (user) {
             if (bcrypt.compareSync(password, user.password)) {
-                resolve(user)
+                // make jwt
+                const token = jwt.sign({
+                    id: user._id,
+                    email: user.email,
+                    name: user.name,
+                    role: user.role,
+                    address: user.address,
+                }, "CHANGE_THIS_TOKEN_SECRET");
+                resolve(token);
             }
             reject('La contraseña es incorrecta')
         }
