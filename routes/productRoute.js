@@ -3,11 +3,8 @@ const router = express.Router();
 const Product = require('../models/product');
 const auth = require("../middleware/auth");
 
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
 	try {
-		if (req.userData.role !== 'admin') {
-			return res.status(401).send('Access denied.');
-		}
 		const products = await Product.find();
 		res.status(200).send(products);
 	} catch (error) {
@@ -17,6 +14,7 @@ router.get('/', auth, async (req, res) => {
 	}
 });
 
+// only admin can create a new product
 router.post('/', auth, async (req, res) => {
 	try {
 		if (req.userData.role !== 'admin') {
