@@ -5,7 +5,7 @@ const ProductSchema = new mongoose.Schema({
     price: Number,
     stock: Number,
     description: String,
-    imageURL: String,
+    picture: String,
     category: String,
     createdAt: {
         type: Date,
@@ -16,5 +16,10 @@ const ProductSchema = new mongoose.Schema({
         default: Date.now
     }
 });
+
+ProductSchema.statics.addProduct = async function(product) {
+    const newProduct = new this(product);
+    return await newProduct.save();
+}
 
 module.exports = mongoose.model('Product', ProductSchema);
