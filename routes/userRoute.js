@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/user')
 const emailExistence = require('email-existence');
 const bcrypt = require('bcrypt')
+const auth = require('../middleware/auth')
 
 const validateEmail = async (email) => {
     return new Promise((resolve, reject) => {
@@ -15,6 +16,33 @@ const validateEmail = async (email) => {
         });
     })
 }
+
+router.get('/', auth, async (req, res) => {
+    try {
+        if (req.userData.role !== "admin")
+            return res.status(401).send("Access denied.")
+        const users = await User.find().select({
+            _id: 1,
+            name: 1,
+            email: 1,
+            role: 1,
+            run: 1,
+            phone: 1,
+            // address: 1,
+            // birthday: 1,
+            // region: 1,
+            // province: 1,
+            // commune: 1,
+            // sex: 1,
+            // createdAt: 1,
+            // updatedAt: 1
+        });
+        res.status(200).send(users);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(error);
+    }
+});
 
 router.post('/register', async (req, res) => {  
     try {
