@@ -14,6 +14,21 @@ router.get('/', async (req, res) => {
 	}
 });
 
+// catalog
+router.get('/catalogo', async(req, res) => {
+	try {
+		// get products by category
+		const catalog = await Product.aggregate([
+			{ $group: { _id: '$category', products: { $push: '$$ROOT' } } }
+		]);
+		res.status(200).send(catalog);
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message
+		})
+	}
+});
+
 // only admin can create a new product
 router.post('/', auth, async (req, res) => {
 	try {
