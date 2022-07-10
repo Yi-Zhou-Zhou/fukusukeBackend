@@ -39,4 +39,42 @@ router.post('/', auth, async (req, res) => {
 	}
 });
 
+// only admin can delete a new product
+router.delete('/', auth, async (req, res) => {
+	try {
+		if (req.userData.role !== 'admin') {
+			return res.status(401).send('Access denied.');
+		}
+		const id = req.body._id;	
+		
+		await Product.findByIdAndDelete(id)	
+		res.status(201).json({
+			message: `Product with id ${id} deleted succesfully`,
+			id
+		})
+	} catch (error) {
+		res.status(500).json({
+			message: error.message
+		})
+	}
+});
+
+router.put('/', auth, async (req, res) => {
+	try {
+		if (req.userData.role !== 'admin') {
+			return res.status(401).send('Access denied.');
+		}
+		const updatedProduct = await Product.findOneAndUpdate(req.body._id, { $set: { name: req.body.name, price:req.body.price}}, {new:true})	
+		res.status(201).json({
+			message: `Product with id ${req.body._id} updated succesfully`,
+			updatedProduct
+			
+		})
+	} catch (error) {
+		res.status(500).json({
+			message: error.message
+		})
+	}
+});
+
 module.exports = router;

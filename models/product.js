@@ -21,5 +21,6 @@ ProductSchema.statics.addProduct = async function(product) {
     const newProduct = new this(product);
     return await newProduct.save();
 }
+    
 
 module.exports = mongoose.model('Product', ProductSchema);
