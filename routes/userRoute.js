@@ -28,12 +28,12 @@ router.get('/', auth, async (req, res) => {
             role: 1,
             run: 1,
             phone: 1,
-            // address: 1,
-            // birthday: 1,
-            // region: 1,
-            // province: 1,
-            // commune: 1,
-            // sex: 1,
+            address: 1,
+            birthday: 1,
+            region: 1,
+            province: 1,
+            commune: 1,
+            sex: 1,
             // createdAt: 1,
             // updatedAt: 1
         });
@@ -105,5 +105,45 @@ router.post('/login', async (req, res) => {
         })
     }
 });
+
+router.put('/:id/edit', auth, async (req, res) => {
+    try {
+        if (req.userData.role !== "admin")
+            return res.status(401).send("Access denied.")
+        const { id } = req.params
+        const { email, name, run, address, birthday, phone, region, province, commune, role, sex } = req.body
+        const birthdayDate = new Date(birthday);
+        const user = await User.findByIdAndUpdate(id, {
+            email,
+            name,
+            run,
+            address,
+            birthday,
+            phone,
+            region,
+            province,
+            commune,
+            role,
+            sex
+        }, { new: true })
+        return res.status(200).send(user)
+    } catch (error) {
+        return res.status(500).send(error)
+    }
+});
+
+
+router.delete('/:id/delete', auth, async (req, res) => {
+    try {
+        if (req.userData.role !== "admin")
+            return res.status(401).send("Access denied.")
+        const { id } = req.params
+        const user = await User.findByIdAndDelete(id)
+        return res.status(200).send(user)
+    } catch (error) {
+        return res.status(500).send(error)
+    }
+});
+
 
 module.exports = router;
