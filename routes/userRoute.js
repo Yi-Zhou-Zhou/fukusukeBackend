@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/user')
 const emailExistence = require('email-existence');
 const bcrypt = require('bcrypt')
+const auth = require('../middleware/auth')
 
 const validateEmail = async (email) => {
     return new Promise((resolve, reject) => {
@@ -15,6 +16,33 @@ const validateEmail = async (email) => {
         });
     })
 }
+
+router.get('/', auth, async (req, res) => {
+    try {
+        if (req.userData.role !== "admin")
+            return res.status(401).send("Access denied.")
+        const users = await User.find().select({
+            _id: 1,
+            name: 1,
+            email: 1,
+            role: 1,
+            run: 1,
+            phone: 1,
+            address: 1,
+            birthday: 1,
+            region: 1,
+            province: 1,
+            commune: 1,
+            sex: 1,
+            // createdAt: 1,
+            // updatedAt: 1
+        });
+        res.status(200).send(users);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(error);
+    }
+});
 
 router.post('/register', async (req, res) => {  
     try {
@@ -77,5 +105,55 @@ router.post('/login', async (req, res) => {
         })
     }
 });
+
+router.put('/:id/edit', auth, async (req, res) => {
+    try {
+        if (req.userData.role !== "admin")
+            return res.status(401).send("Access denied.")
+        const { id } = req.params
+        const { email, name, run, address, birthday, phone, region, province, commune, role, sex } = req.body
+        // if email changed, verify it
+        let user = await User.findById(id);
+        if (user.email !== email){
+            const emailValid = await validateEmail(email);
+            if(!emailValid) {
+                return res.status(400).json({
+                    message: 'El correo electrónico no es válido'
+                })
+            }
+        }
+        const birthdayDate = new Date(birthday);
+        user = await User.findByIdAndUpdate(id, {
+            email,
+            name,
+            run,
+            address,
+            birthday,
+            phone,
+            region,
+            province,
+            commune,
+            role,
+            sex
+        }, { new: true })
+        return res.status(200).send(user)
+    } catch (error) {
+        return res.status(500).send(error)
+    }
+});
+
+
+router.delete('/:id/delete', auth, async (req, res) => {
+    try {
+        if (req.userData.role !== "admin")
+            return res.status(401).send("Access denied.")
+        const { id } = req.params
+        const user = await User.findByIdAndDelete(id)
+        return res.status(200).send(user)
+    } catch (error) {
+        return res.status(500).send(error)
+    }
+});
+
 
 module.exports = router;
