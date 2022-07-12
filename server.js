@@ -8,11 +8,11 @@ app.use(express.json())
 
 mongoose.connect('mongodb+srv://www-chipleki:Kp6LGRV4t7AUBfXV@cluster0.5pgu7.mongodb.net/fukusuke', {useNewUrlParser: true, useUnifiedTopology: true});
 
+
 app.use('/user', require('./routes/userRoute'));
 app.use('/product', require('./routes/productRoute'));
+app.use('/order', require('./routes/orderRoute'));
 
 app.listen(8080, function(){
     console.log("Servidor Iniciado");
 });
-
-
