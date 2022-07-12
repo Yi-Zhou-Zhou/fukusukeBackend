@@ -112,8 +112,18 @@ router.put('/:id/edit', auth, async (req, res) => {
             return res.status(401).send("Access denied.")
         const { id } = req.params
         const { email, name, run, address, birthday, phone, region, province, commune, role, sex } = req.body
+        // if email changed, verify it
+        let user = await User.findById(id);
+        if (user.email !== email){
+            const emailValid = await validateEmail(email);
+            if(!emailValid) {
+                return res.status(400).json({
+                    message: 'El correo electrónico no es válido'
+                })
+            }
+        }
         const birthdayDate = new Date(birthday);
-        const user = await User.findByIdAndUpdate(id, {
+        user = await User.findByIdAndUpdate(id, {
             email,
             name,
             run,
