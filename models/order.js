@@ -13,11 +13,11 @@ const OrderSchema = new mongoose.Schema({
         }
     ],
     client:{
+        id: String,
         name: String,
         address: String,
-        phone: String,
-     },
-
+    },
+    state: String,
     createdAt: {
         type: Date,
         default: Date.now
