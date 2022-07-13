@@ -26,7 +26,7 @@ router.post('/', auth, async (req, res) => {
 			stock: req.body.stock,
 			description: req.body.description,
 			category: req.body.category,
-			picture: "https://images.unsplash.com/photo-1615361200141-f45040f367be?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
+			picture: req.body.picture
 		});
 		res.status(201).json({
 			message: 'Product added',
@@ -64,7 +64,7 @@ router.put('/', auth, async (req, res) => {
 		if (req.userData.role !== 'admin') {
 			return res.status(401).send('Access denied.');
 		}
-		const updatedProduct = await Product.findOneAndUpdate(req.body._id, { $set: { name: req.body.name, price:req.body.price}}, {new:true})	
+		const updatedProduct = await Product.findByIdAndUpdate(req.body._id, { $set: { name: req.body.name, price:req.body.price, description: req.body.description, stock: req.body.stock}}, {new:true})	
 		res.status(201).json({
 			message: `Product with id ${req.body._id} updated succesfully`,
 			updatedProduct
