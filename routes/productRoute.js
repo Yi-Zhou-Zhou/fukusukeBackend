@@ -20,6 +20,7 @@ router.post('/', auth, async (req, res) => {
 		if (req.userData.role !== 'admin') {
 			return res.status(401).send('Access denied.');
 		}
+
 		const product = await Product.addProduct({
 			name: req.body.name,
 			price: req.body.price,
@@ -28,6 +29,7 @@ router.post('/', auth, async (req, res) => {
 			category: req.body.category,
 			picture: req.body.picture
 		});
+
 		res.status(201).json({
 			message: 'Product added',
 			product
@@ -62,14 +64,21 @@ router.delete('/', auth, async (req, res) => {
 router.put('/', auth, async (req, res) => {
 	try {
 		if (req.userData.role !== 'admin') {
-			return res.status(401).send('Access denied.');
+			const updatedProduct = await Product.findByIdAndUpdate(req.body._id, { $set: { stock: req.body.stock}}, {new:true})	
+
+			res.status(201).json({
+				message: `Product with id ${req.body._id}'s stock updated successfully`,
+				updatedProduct
+			})
+		} else {
+			const updatedProduct = await Product.findByIdAndUpdate(req.body._id, { $set: { name: req.body.name, price:req.body.price, description: req.body.description, stock: req.body.stock}}, {new:true})	
+	
+			res.status(201).json({
+				message: `Product with id ${req.body._id} updated succesfully`,
+				updatedProduct
+				
+			})
 		}
-		const updatedProduct = await Product.findByIdAndUpdate(req.body._id, { $set: { name: req.body.name, price:req.body.price, description: req.body.description, stock: req.body.stock}}, {new:true})	
-		res.status(201).json({
-			message: `Product with id ${req.body._id} updated succesfully`,
-			updatedProduct
-			
-		})
 	} catch (error) {
 		res.status(500).json({
 			message: error.message
