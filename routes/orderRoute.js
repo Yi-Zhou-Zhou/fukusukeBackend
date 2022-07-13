@@ -28,20 +28,21 @@ router.post('/', async (req, res) => {
 				picture: req.body.productos[i].picture,
 				quantity: req.body.productos[i].quantity,
 			}
+
 			orders.push(object)
 		}
-		const order = await Order.addOrder(req.body
-			
-			//{
-			// price: req.body.price,
-			// productos: orders,
-			// client:{
-			// 	name: req.body.name,
-			// 	address: req.body.address,
-			// 	phone: req.body.phone,
-			// },
-			//}
-		);
+
+		const order = await Order.addOrder({
+			price: req.body.price,
+			productos: orders,
+			client: {
+				id: req.body.userId,
+				name: req.body.userName,
+				address: req.body.userAddress
+			},
+			state: req.body.state
+		});
+
 		res.status(201).json({
 			message: 'Order added',
 			order
@@ -53,5 +54,21 @@ router.post('/', async (req, res) => {
 	}
 });
 
+router.put('/', async (req, res) => {
+	try {
+		console.log(req.body)
+
+		const updatedOrder = await Order.findByIdAndUpdate(req.body._id, { $set: { state: req.body.state }}, {new: true})
+
+		res.status(201).json({
+			message: `Order with id ${req.body._id} updated succesfully`,
+			updatedOrder
+		})
+	} catch (error) {
+		res.status(500).json({
+			message: error.message
+		})
+	}
+});
 
 module.exports = router;
