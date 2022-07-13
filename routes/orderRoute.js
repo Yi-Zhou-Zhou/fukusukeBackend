@@ -30,17 +30,18 @@ router.post('/', async (req, res) => {
 			}
 			orders.push(object)
 		}
-		const order = await Order.addOrder({
-			price: req.body.price,
-			productos: orders,
-			client:{
-				name: req.body.name,
-				address: req.body.address,
-				phone: req.body.phone,
-			},
-
+		const order = await Order.addOrder(req.body
 			
-		});
+			//{
+			// price: req.body.price,
+			// productos: orders,
+			// client:{
+			// 	name: req.body.name,
+			// 	address: req.body.address,
+			// 	phone: req.body.phone,
+			// },
+			//}
+		);
 		res.status(201).json({
 			message: 'Order added',
 			order
