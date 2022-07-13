@@ -9,6 +9,7 @@ const OrderSchema = new mongoose.Schema({
             price: Number,
             description: String,
             picture: String,
+            quantity: Number,
         }
     ],
     client:{
@@ -25,5 +26,10 @@ const OrderSchema = new mongoose.Schema({
         type: Date
     }
 });
+
+OrderSchema.statics.addOrder = async function(order) {
+    const newOrder = new this(order);
+    return await newOrder.save();
+}
 
 module.exports = mongoose.model('Order', OrderSchema);
