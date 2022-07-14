@@ -4,7 +4,8 @@ const Order = require('../models/order');
 
 router.get('/', async (req, res) => {
     try {
-		const order = await Order.find();
+		const order = await Order.find().sort({createdAt: 1});
+
 		res.status(200).send(order);
 	} catch (error) {
 		res.status(500).json({
