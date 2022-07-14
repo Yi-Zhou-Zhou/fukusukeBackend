@@ -19,7 +19,7 @@ const validateEmail = async (email) => {
 
 router.get('/', auth, async (req, res) => {
     try {
-        if (req.userData.role !== "admin")
+        if (req.userData.role === "client")
             return res.status(401).send("Access denied.")
         const users = await User.find().select({
             _id: 1,
